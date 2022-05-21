@@ -1,0 +1,7 @@
+ipywidgets
+jupyterlab
+nodejs
+notebook
+numpy
+torch
+tqdm
