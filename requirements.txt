@@ -3,5 +3,6 @@ jupyterlab
 nodejs
 notebook
 numpy
+pillow
 torch
 tqdm
