@@ -13,10 +13,10 @@ warnings.filterwarnings("ignore")
 
 from simsiam import Trainer
 from simsiam.dataset import get_dataset, get_loader
+from simsiam.loss import NegativeCosineSimilarity
 from simsiam.model import SimSiam
 from simsiam.model.backbone import resnet18
 from simsiam.model.simsiam import get_transforms
-from simsiam.loss import NegativeCosineSimilarity
 
 
 def make_parser():
@@ -24,9 +24,7 @@ def make_parser():
     parser.add_argument("-b", "--batch-size", default=64, type=int, help="plese set batch-size")
     parser.add_argument("-e", "--epochs", default=300, type=int, help="number of total epochs to run")
     parser.add_argument("-m", "--momentum", default=0.9, type=float, help="momentum of SGD solver")
-    parser.add_argument(
-        "-r", "--root", default="path to dataset root", type=str, help="please set data root"
-    )
+    parser.add_argument("-r", "--root", default="path to dataset root", type=str, help="please set data root")
     parser.add_argument("-s", "--seed", default=1, type=int, help="seed for initializing training")
     parser.add_argument("-w", "--weight-decay", default=1e-4, type=float, help="weight decay (default: 1e-4)")
 

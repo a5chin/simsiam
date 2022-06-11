@@ -18,7 +18,7 @@ from collections import OrderedDict, defaultdict
 import cv2
 import numpy as np
 from pycocotools.cocoeval import COCOeval
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 logger = logging.getLogger(__name__)
 
