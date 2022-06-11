@@ -22,7 +22,7 @@ def test_model():
     criterion = NegativeCosineSimilarity()
 
     images = torch.randn(4, 3, 512, 512)
-    out0, out1 = simsiam(images[: 2], images[2: ])
+    out0, out1 = simsiam(images[:2], images[2:])
     assert (out0[0].shape == out0[1].shape) and (out1[0].shape == out1[1].shape)
 
     loss = (criterion(*out0).mean() + criterion(*out1).mean()) / 2
