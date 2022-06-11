@@ -6,4 +6,5 @@ numpy
 pillow
 pycocotools
 torch
+torchvision
 tqdm

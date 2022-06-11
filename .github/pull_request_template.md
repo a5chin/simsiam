@@ -1,6 +1,5 @@
 # Objective
 
-
 # Checks to be made before requesting a review
 
 - [ ] Confirmed that `Pytest` does not cause an error.
