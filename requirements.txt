@@ -4,6 +4,8 @@ nodejs
 notebook
 numpy
 pillow
+pycocotools
+tensorboard
 torch
 torchvision
 tqdm
