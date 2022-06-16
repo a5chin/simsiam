@@ -62,18 +62,8 @@ def main():
 
     train_transform, valid_transform = get_transforms("train"), get_transforms("valid")
 
-    train_dataset = CIFAR10(
-        root=args.root,
-        train=True,
-        download=True,
-        transform=train_transform
-    )
-    valid_dataset = CIFAR10(
-        root=args.root,
-        train=False,
-        download=False,
-        transform=valid_transform
-    )
+    train_dataset = CIFAR10(root=args.root, train=True, download=True, transform=train_transform)
+    valid_dataset = CIFAR10(root=args.root, train=False, download=False, transform=valid_transform)
     train_loader, valid_loader = get_loader(
         train_dataset=train_dataset, valid_dataset=valid_dataset, batch_size=args.batch_size
     )
