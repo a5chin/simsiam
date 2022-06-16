@@ -20,7 +20,7 @@ pip install -r requirements.txt
 ## Example
 ```sh
 cd examples
-python simsiam.py
+python simsiam_cifar10.py
 ```
 
 ## Citations

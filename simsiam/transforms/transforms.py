@@ -32,7 +32,7 @@ def get_transforms(mode: str):
     base_transform = {
         "train": transforms.Compose(
             [
-                transforms.ToPILImage(),
+                # transforms.ToPILImage(),
                 transforms.RandomResizedCrop(size=(512, 512), scale=(0.2, 1.0)),
                 transforms.RandomGrayscale(p=0.2),
                 transforms.RandomApply([GaussianBlur([0.1, 2.0])], p=0.5),
@@ -42,7 +42,7 @@ def get_transforms(mode: str):
         ),
         "valid": transforms.Compose(
             [
-                transforms.ToPILImage(),
+                # transforms.ToPILImage(),
                 transforms.RandomResizedCrop(size=(512, 512), scale=(0.2, 1.0)),
                 transforms.RandomGrayscale(p=0.2),
                 transforms.ToTensor(),
