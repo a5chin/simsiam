@@ -16,7 +16,7 @@ from simsiam.dataset import get_dataset, get_loader
 from simsiam.loss import NegativeCosineSimilarity
 from simsiam.model import SimSiam
 from simsiam.model.backbone import resnet18
-from simsiam.model.simsiam import get_transforms
+from simsiam.transforms import get_transforms
 
 
 def make_parser():
