@@ -8,5 +8,7 @@ from simsiam.transforms import get_transforms
 
 
 def test_transform():
-    transforms = get_transforms()
+    transforms = get_transforms("train")
     assert transforms is not None
+
+    return transforms
