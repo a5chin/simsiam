@@ -1,4 +1,3 @@
 [flake8]
-ignore = E203, W503, W504, E402, E731, E741, B, F522, E722, F841, E501, F821, E712
-max-line-length = 128
+ignore = E402, E501, F841, W503
 exclude = **/__init__.py

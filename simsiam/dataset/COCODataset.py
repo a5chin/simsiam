@@ -35,7 +35,9 @@ class COCODataset(Dataset):
             target and transforms it.
     """
 
-    def __init__(self, root: str, typ="train", transform=None, target_transform=None):
+    def __init__(
+        self, root: str, typ="train", transform=None, target_transform=None
+    ):
         from pycocotools.coco import COCO
 
         self.name = "COCO"
@@ -46,14 +48,19 @@ class COCODataset(Dataset):
         self.transform = transform
         self.target_transform = target_transform
 
-        cats = [cat["name"] for cat in self.coco.loadCats(self.coco.getCatIds())]
+        cats = [
+            cat["name"] for cat in self.coco.loadCats(self.coco.getCatIds())
+        ]
         self.classes = ["__background__"] + cats
         logger.info("=> classes: {}".format(self.classes))
         self.num_classes = len(self.classes)
         self._class_to_ind = dict(zip(self.classes, range(self.num_classes)))
         self._class_to_coco_ind = dict(zip(cats, self.coco.getCatIds()))
         self._coco_ind_to_class_ind = dict(
-            [(self._class_to_coco_ind[cls], self._class_to_ind[cls]) for cls in self.classes[1:]]
+            [
+                (self._class_to_coco_ind[cls], self._class_to_ind[cls])
+                for cls in self.classes[1:]
+            ]
         )
 
     def _get_anno_file_name(self):
@@ -73,7 +80,10 @@ class COCODataset(Dataset):
 
         file_name = coco.loadImgs(img_id)[0]["file_name"]
 
-        img = cv2.imread(self.root + "images" + file_name, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
+        img = cv2.imread(
+            self.root + "images" + file_name,
+            cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION,
+        )
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -93,9 +103,16 @@ class COCODataset(Dataset):
         fmt_str += "    Number of datapoints: {}\n".format(self.__len__())
         fmt_str += "    Root Location: {}\n".format(self.root)
         tmp = "    Transforms (if any): "
-        fmt_str += "{0}{1}\n".format(tmp, self.transform.__repr__().replace("\n", "\n" + " " * len(tmp)))
+        fmt_str += "{0}{1}\n".format(
+            tmp, self.transform.__repr__().replace("\n", "\n" + " " * len(tmp))
+        )
         tmp = "    Target Transforms (if any): "
-        fmt_str += "{0}{1}".format(tmp, self.target_transform.__repr__().replace("\n", "\n" + " " * len(tmp)))
+        fmt_str += "{0}{1}".format(
+            tmp,
+            self.target_transform.__repr__().replace(
+                "\n", "\n" + " " * len(tmp)
+            ),
+        )
         return fmt_str
 
     def processKeypoints(self, keypoints):
@@ -104,7 +121,11 @@ class COCODataset(Dataset):
             p = keypoints[keypoints[:, 2] > 0][:, :2].mean(axis=0)
             num_keypoints = keypoints.shape[0]
             for i in range(num_keypoints):
-                tmp[i][0:3] = [float(keypoints[i][0]), float(keypoints[i][1]), float(keypoints[i][2])]
+                tmp[i][0:3] = [
+                    float(keypoints[i][0]),
+                    float(keypoints[i][1]),
+                    float(keypoints[i][2]),
+                ]
 
         return tmp
 
@@ -121,7 +142,9 @@ class COCODataset(Dataset):
         res_folder = os.path.join(output_dir, "results")
         if not os.path.exists(res_folder):
             os.makedirs(res_folder)
-        res_file = os.path.join(res_folder, "keypoints_%s_results.json" % self.dataset)
+        res_file = os.path.join(
+            res_folder, "keypoints_%s_results.json" % self.dataset
+        )
 
         # preds is a list of: image x person x (keypoints)
         # keypoints: num_joints * 4 (x, y, score, tag)
@@ -130,7 +153,9 @@ class COCODataset(Dataset):
             img_id = self.ids[idx]
             file_name = self.coco.loadImgs(img_id)[0]["file_name"]
             for idx_kpt, kpt in enumerate(_kpts):
-                area = (np.max(kpt[:, 0]) - np.min(kpt[:, 0])) * (np.max(kpt[:, 1]) - np.min(kpt[:, 1]))
+                area = (np.max(kpt[:, 0]) - np.min(kpt[:, 0])) * (
+                    np.max(kpt[:, 1]) - np.min(kpt[:, 1])
+                )
                 kpt = self.processKeypoints(kpt)
                 # if self.with_center:
                 if cfg.DATASET.WITH_CENTER and not cfg.TEST.IGNORE_CENTER:
@@ -208,13 +233,19 @@ class COCODataset(Dataset):
             if len(img_kpts) == 0:
                 continue
 
-            _key_points = np.array([img_kpts[k]["keypoints"] for k in range(len(img_kpts))])
-            key_points = np.zeros((_key_points.shape[0], num_joints * 3), dtype=np.float)
+            _key_points = np.array(
+                [img_kpts[k]["keypoints"] for k in range(len(img_kpts))]
+            )
+            key_points = np.zeros(
+                (_key_points.shape[0], num_joints * 3), dtype=np.float
+            )
 
             for ipt in range(num_joints):
                 key_points[:, ipt * 3 + 0] = _key_points[:, ipt, 0]
                 key_points[:, ipt * 3 + 1] = _key_points[:, ipt, 1]
-                key_points[:, ipt * 3 + 2] = _key_points[:, ipt, 2]  # keypoints score.
+                key_points[:, ipt * 3 + 2] = _key_points[
+                    :, ipt, 2
+                ]  # keypoints score.
 
             for k in range(len(img_kpts)):
                 kpt = key_points[k].reshape((num_joints, 3))
@@ -243,7 +274,18 @@ class COCODataset(Dataset):
         coco_eval.evaluate()
         coco_eval.accumulate()
         coco_eval.summarize()
-        stats_names = ["AP", "Ap .5", "AP .75", "AP (M)", "AP (L)", "AR", "AR .5", "AR .75", "AR (M)", "AR (L)"]
+        stats_names = [
+            "AP",
+            "Ap .5",
+            "AP .75",
+            "AP (M)",
+            "AP (L)",
+            "AR",
+            "AR .5",
+            "AR .75",
+            "AR (M)",
+            "AR (L)",
+        ]
 
         info_str = []
         for ind, name in enumerate(stats_names):
@@ -252,14 +294,22 @@ class COCODataset(Dataset):
         return info_str
 
 
-def get_dataset(root, train_transform, valid_transform) -> Tuple[Dataset, Dataset]:
-    traindataset = COCODataset(root=root, typ="train", transform=train_transform)
-    valdataset = COCODataset(root=root, typ="validation", transform=valid_transform)
+def get_dataset(
+    root, train_transform, valid_transform
+) -> Tuple[Dataset, Dataset]:
+    traindataset = COCODataset(
+        root=root, typ="train", transform=train_transform
+    )
+    valdataset = COCODataset(
+        root=root, typ="validation", transform=valid_transform
+    )
 
     return traindataset, valdataset
 
 
-def get_loader(train_dataset, valid_dataset, batch_size) -> Tuple[DataLoader, DataLoader]:
+def get_loader(
+    train_dataset, valid_dataset, batch_size
+) -> Tuple[DataLoader, DataLoader]:
     train_loader = DataLoader(
         dataset=train_dataset,
         batch_size=batch_size,
