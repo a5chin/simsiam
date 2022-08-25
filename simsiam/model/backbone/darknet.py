@@ -1,6 +1,13 @@
 from torch import nn
 
-from .network_blocks import BaseConv, CSPLayer, DWConv, Focus, ResLayer, SPPBottleneck
+from .network_blocks import (
+    BaseConv,
+    CSPLayer,
+    DWConv,
+    Focus,
+    ResLayer,
+    SPPBottleneck,
+)
 
 
 class Darknet(nn.Module):
@@ -26,7 +33,9 @@ class Darknet(nn.Module):
         assert out_features, "please provide output features of Darknet"
         self.out_features = out_features
         self.stem = nn.Sequential(
-            BaseConv(in_channels, stem_out_channels, ksize=3, stride=1, act="lrelu"),
+            BaseConv(
+                in_channels, stem_out_channels, ksize=3, stride=1, act="lrelu"
+            ),
             *self.make_group_layer(stem_out_channels, num_blocks=1, stride=2),
         )
         in_channels = stem_out_channels * 2  # 64
@@ -34,37 +43,61 @@ class Darknet(nn.Module):
         num_blocks = Darknet.depth2blocks[depth]
         # create darknet with `stem_out_channels` and `num_blocks` layers.
         # to make model structure more clear, we don't use `for` statement in python.
-        self.dark2 = nn.Sequential(*self.make_group_layer(in_channels, num_blocks[0], stride=2))
+        self.dark2 = nn.Sequential(
+            *self.make_group_layer(in_channels, num_blocks[0], stride=2)
+        )
         in_channels *= 2  # 128
-        self.dark3 = nn.Sequential(*self.make_group_layer(in_channels, num_blocks[1], stride=2))
+        self.dark3 = nn.Sequential(
+            *self.make_group_layer(in_channels, num_blocks[1], stride=2)
+        )
         in_channels *= 2  # 256
-        self.dark4 = nn.Sequential(*self.make_group_layer(in_channels, num_blocks[2], stride=2))
+        self.dark4 = nn.Sequential(
+            *self.make_group_layer(in_channels, num_blocks[2], stride=2)
+        )
         in_channels *= 2  # 512
 
         self.dark5 = nn.Sequential(
             *self.make_group_layer(in_channels, num_blocks[3], stride=2),
-            *self.make_spp_block([in_channels, in_channels * 2], in_channels * 2),
+            *self.make_spp_block(
+                [in_channels, in_channels * 2], in_channels * 2
+            ),
         )
 
-    def make_group_layer(self, in_channels: int, num_blocks: int, stride: int = 1):
+    def make_group_layer(
+        self, in_channels: int, num_blocks: int, stride: int = 1
+    ):
         "starts with conv layer then has `num_blocks` `ResLayer`"
         return [
-            BaseConv(in_channels, in_channels * 2, ksize=3, stride=stride, act="lrelu"),
+            BaseConv(
+                in_channels,
+                in_channels * 2,
+                ksize=3,
+                stride=stride,
+                act="lrelu",
+            ),
             *[(ResLayer(in_channels * 2)) for _ in range(num_blocks)],
         ]
 
     def make_spp_block(self, filters_list, in_filters):
         m = nn.Sequential(
             *[
-                BaseConv(in_filters, filters_list[0], 1, stride=1, act="lrelu"),
-                BaseConv(filters_list[0], filters_list[1], 3, stride=1, act="lrelu"),
+                BaseConv(
+                    in_filters, filters_list[0], 1, stride=1, act="lrelu"
+                ),
+                BaseConv(
+                    filters_list[0], filters_list[1], 3, stride=1, act="lrelu"
+                ),
                 SPPBottleneck(
                     in_channels=filters_list[1],
                     out_channels=filters_list[0],
                     activation="lrelu",
                 ),
-                BaseConv(filters_list[0], filters_list[1], 3, stride=1, act="lrelu"),
-                BaseConv(filters_list[1], filters_list[0], 1, stride=1, act="lrelu"),
+                BaseConv(
+                    filters_list[0], filters_list[1], 3, stride=1, act="lrelu"
+                ),
+                BaseConv(
+                    filters_list[1], filters_list[0], 1, stride=1, act="lrelu"
+                ),
             ]
         )
         return m
@@ -143,7 +176,9 @@ class CSPDarknet(nn.Module):
         # dark5
         self.dark5 = nn.Sequential(
             Conv(base_channels * 8, base_channels * 16, 3, 2, act=act),
-            SPPBottleneck(base_channels * 16, base_channels * 16, activation=act),
+            SPPBottleneck(
+                base_channels * 16, base_channels * 16, activation=act
+            ),
             CSPLayer(
                 base_channels * 16,
                 base_channels * 16,
